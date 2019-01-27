@@ -2,52 +2,44 @@
 
 namespace App\Security;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use App\Entity\User;
 use App\Repository\UserRepository;
 
-class RegisterForm extends AbstractType
+class RegisterForm
 {
     private $passwordEncoder;
+    private $csrfTokenManager;
     private $validator;
     private $repository;
     private $errorsValidation;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, ValidatorInterface $validator, UserRepository $repository)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, CsrfTokenManagerInterface $csrfTokenManager, ValidatorInterface $validator, UserRepository $repository)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->csrfTokenManager = $csrfTokenManager;
         $this->repository = $repository;
         $this->validator = $validator;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-            ->setAttribute('class', 'user-account-form')
-            ->add('email', EmailType::class)
-            ->add('password', PasswordType::class)
-            ->add('autologin', CheckboxType::class, ['required' => false])
-            ->add('save', SubmitType::class)
-        ;
-    }
-
-    /**
-     * 
-     */
     public function validateUser(User $user)
     {
         $errors = $this->validator->validate($user);
 
         if (count($errors) > 0) {
-            $this->errorsValidation = (string) $errors;
+            $iterator = $errors->getIterator();
+            while($iterator->valid()) {
+                $current = $iterator->current();
+                $this->addErrorValidation($current->getPropertyPath() , $current->getMessage());
+                $iterator->next();
+            }
     
             return false;
         }
@@ -63,23 +55,21 @@ class RegisterForm extends AbstractType
         $this->repository->insertUser($user);
     }
 
-    private function setErrorsValidation(string $errorsValidation)
+    public function checkCsrfToken($token)
     {
-        $this->errorsValidation = $errorsValidation;
+        $token = new CsrfToken('register', $token);
+        if (!$this->csrfTokenManager->isTokenValid($token)) {
+            throw new InvalidCsrfTokenException();
+        }
     }
 
-    public function getErrorsValidation():string
+    private function addErrorValidation($key, $errorValidation)
+    {
+        $this->errorsValidation[$key][] = $errorValidation;
+    }
+
+    public function getErrorsValidation()
     {
         return $this->errorsValidation;
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => User::class,
-            'attr' => array(
-                'class' => 'user-account-form'
-            )
-        ]);
     }
 }

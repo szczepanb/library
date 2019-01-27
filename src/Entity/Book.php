@@ -37,7 +37,7 @@ class Book
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Author", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * 
      * @Assert\NotBlank(
      *  message = "This field cannot be empty."
@@ -59,6 +59,7 @@ class Book
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Translations", mappedBy="book", orphanRemoval=true, cascade={"persist", "remove"})
+     * 
      * @Assert\NotBlank(
      *  message = "This field cannot be empty."
      * )
@@ -67,7 +68,7 @@ class Book
 
     public function __construct()
     {
-        $this->translations = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
@@ -112,14 +113,11 @@ class Book
     /**
      * @return Collection|Translations[]
      */
-    public function getTranslations(): Collection
+    public function getTranslations(): ?Collection
     {
         return $this->translations;
     }
 
-    /**
-     * 
-     */
     public function setTranslations(Collection $translations)
     {
         $this->translations = $translations;
@@ -127,6 +125,9 @@ class Book
 
     public function addTranslation(Translations $translation): self
     {
+        if(empty($this->translations))
+            $this->translations = new ArrayCollection();
+
         if (!$this->translations->contains($translation)) {
             $this->translations[] = $translation;
             $translation->setBook($this);
@@ -137,7 +138,7 @@ class Book
 
     public function removeTranslations(): self
     {
-        $this->translations->clear();
+        $this->translations = null;
         return $this;
     }
 }

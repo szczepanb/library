@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<section class="main-content">
+    <div>
+        <h2>Books</h2>
+        <div class="table-responsive">
+            {% if rows is defined %}{% if rows %}
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th width="200">Publication Date</th>
+                        <th>Translations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.title }}</td>
+                        <td>{% if row.author %}{{ row.author }}{% else %} - {% endif %}</td>
+                        <td>{{ row.getPublicationDate()|date("Y-m-d") }}</td>
+                        <td>{{ row.getTranslations()|join(', ') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-warning">Empty results. Login and add new books.</div>
+            {% endif %}{% endif %}
+        </div>
+        <div class="text-center">
+            <a class="btn btn-primary" href="{{ path('library') }}">See All</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

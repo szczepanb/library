@@ -47,41 +47,46 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
+        $errors = null;
+
         $user = new User();
         $user->setRoles(['ROLE_USER']);
 
-        $form = $this->createForm(RegisterForm::class, $user);
-        $form->handleRequest($request);
+        if(
+            'app_register' === $request->attributes->get('_route') && 
+            $request->isMethod('POST')
+        )
+        {
+            $registerForm->checkCsrfToken($request->get('_csrf_token'));
 
-        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setEmail((string) $request->request->get('email'));
+            $user->setPassword((string) $request->request->get('password'));
+            $user->setAutologin((bool) $request->request->get('autologin'));
 
             if($registerForm->validateUser($user))
             {
-                $user = $form->getData();
                 $registerForm->registerUser($user);
-            }
-            else
-            {
-                return new Response($registerForm->getErrorsValidation());
-            }
 
-            if($user->getAutologin())
-            {
-                return $guardHandler->authenticateUserAndHandleSuccess(
-                    $user,          // the User object you just created
-                    $request,
-                    $authenticator, // authenticator whose onAuthenticationSuccess you want to use
-                    'main'          // the name of your firewall in security.yaml
-                );
+                if($user->getAutologin())
+                {
+                    return $guardHandler->authenticateUserAndHandleSuccess(
+                        $user, $request, $authenticator, 'main'
+                    );
+                }
+                else
+                {
+                    return $this->redirectToRoute('app_login');
+                }
             }
             else
             {
-                return $this->redirectToRoute('app_login');
+                $errors = $registerForm->getErrorsValidation();
             }
         }
 
         return $this->render('security/register.html.twig', [
-            'form' => $form->createView(),
+            'user' => $user,
+            'errors' => $errors,
         ]);
     }
     

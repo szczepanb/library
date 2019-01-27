@@ -43,7 +43,7 @@ class AuthorController extends AbstractController
     {
         $filter = $this->setFilter($request);
 
-        $limit = 3;
+        $limit = 5;
         $total = $this->repository->getCountForGrid($filter['q'], $filter['country']);
 
         $parameters = $this->getParameters($filter);
@@ -51,7 +51,7 @@ class AuthorController extends AbstractController
         $paginator = new PaginatorUtility($paginatorUrl, $total, $limit, $page);
         $pagination = $paginator->getPaginator();
 
-        $rows = $this->repository->getForGrid($limit, $pagination['offset'], $filter['q'], $filter['country']);
+        $rows = $this->repository->getForGrid($limit, $pagination->getOffset(), $filter['q'], $filter['country']);
 
         $countries = $this->repository->getDistinctCountries();
         return $this->render('author/index.html.twig', [

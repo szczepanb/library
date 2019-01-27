@@ -99,11 +99,20 @@ class BookRepository extends ServiceEntityRepository
 
     public function getDistinctTranslations(): ?Array
     {
-        return $this->createQueryBuilder('b')->select('DISTINCT t.name')->leftJoin('App\Entity\Translations', 't', 'WITH', 't.book = b.id')->orderBy('t.name', 'DESC')->getQuery()->execute();
+        return $this->createQueryBuilder('b')
+        ->select('DISTINCT t.name')
+        ->leftJoin('App\Entity\Translations', 't', 'WITH', 't.book = b.id')
+        ->orderBy('t.name', 'DESC')
+        ->getQuery()->execute();
     }
 
     public function getDistinctAuthors(): ?Array
     {
-        return $this->createQueryBuilder('b')->select('DISTINCT a')->leftJoin('App\Entity\Author', 'a', 'WITH', 'a.id = b.author')->orderBy('a.name, a.surname', 'DESC')->getQuery()->execute();
+        return $this->createQueryBuilder('b')
+            ->select('DISTINCT a')
+            ->leftJoin('App\Entity\Author', 'a', 'WITH', 'a.id = b.author')
+            ->andWhere("a.id IS NOT NULL")
+            ->orderBy('a.name, a.surname', 'DESC')
+            ->getQuery()->execute();
     }
 }

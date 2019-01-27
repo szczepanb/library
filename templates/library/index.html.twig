@@ -3,6 +3,7 @@
 {% block body %}
 <section class="main-content">
     <div>
+        <h2>Books</h2>
         <div class="grid-top-btn">
             <a class="btn btn-primary" href="{{ path('add_edit_book') }}">Add Book</a>
         </div>
@@ -15,7 +16,7 @@
                     </div>
                     {% if authors is defined %}
                     <div class="grid-filters-inside">
-                        <select id="inputCountry" name="author" class="form-control">
+                        <select id="inputAuthor" name="author" class="form-control">
                             <option value="">-- Select Author --</option>
                             {% for author in authors %}
                             <option value="{{ author.id }}"{% if filter.author is defined %}{% if filter.author == author.id %} selected{% endif %}{% endif %}>{{ author }}</option>
@@ -25,7 +26,7 @@
                     {% endif %}
                     {% if translations is defined %}
                     <div class="grid-filters-inside">
-                        <select id="inputCountry" name="translation" class="form-control">
+                        <select id="inputTranslations" name="translation" class="form-control">
                             <option value="">-- Select Translation --</option>
                             {% for translation in translations %}
                             <option value="{{ translation.name }}"{% if filter.translation is defined %}{% if filter.translation == translation.name %} selected{% endif %}{% endif %}>{{ translation.name }}</option>
@@ -64,7 +65,7 @@
                 {% for row in rows %}
                     <tr>
                         <td>{{ row.title }}</td>
-                        <td>{{ row.author.name }} {{ row.author.surname }}</td>
+                        <td>{% if row.author %}{{ row.author }}{% else %} - {% endif %}</td>
                         <td>{{ row.getPublicationDate()|date("Y-m-d") }}</td>
                         <td>{{ row.getTranslations()|join(', ') }}</td>
                         {% if is_granted('ROLE_USER') %}

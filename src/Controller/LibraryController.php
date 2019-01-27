@@ -43,7 +43,7 @@ class LibraryController extends AbstractController
     {
         $filter = $this->setFilter($request);
 
-        $limit = 1;
+        $limit = 5;
         $total = $this->repository->getCountForGrid($filter['q'], $filter['author'], $filter['translation']);
 
         $parameters = $this->getParameters($filter);
@@ -55,7 +55,6 @@ class LibraryController extends AbstractController
 
         $translations = $this->repository->getDistinctTranslations();
         $authors = $this->repository->getDistinctAuthors();
-
         return $this->render('library/index.html.twig', [
             'pagination' => $pagination,
             'rows' => $rows,
@@ -102,19 +101,26 @@ class LibraryController extends AbstractController
 
             try {
                 $author = $this->getAuthor((int) $request->request->get('author'));
+                $book->setAuthor($author);
             } catch (ExceptionInterface $e) {
                 //let the validator check foreign key exist prevent throw
             }
             
-            $book->setAuthor($author);
-            $book->setPublicationDate(new \DateTime($request->request->get('publication_date')));
+            try {
+                $book->setPublicationDate(new \DateTime($request->request->get('publication_date')));
+            } catch (\Throwable $th) {
+                //let the validator check date even if user type uncorrect;
+            }
 
             $book->removeTranslations();
-            foreach($request->request->get('translations') as $translation)
+            if(is_array($request->request->get('translations')))
             {
-                $trans = new Translations();
-                $trans->setName($translation);
-                $book->addTranslation($trans);
+                foreach($request->request->get('translations') as $translation)
+                {
+                    $trans = new Translations();
+                    $trans->setName($translation);
+                    $book->addTranslation($trans);
+                }
             }
 
             if($this->validateBook($book))
@@ -130,7 +136,7 @@ class LibraryController extends AbstractController
                     case 'save_add':
                         return $this->redirectToRoute('add_edit_book');
                     case 'save_return':
-                        return $this->redirectToRoute('books');
+                        return $this->redirectToRoute('library');
                     default:
                         return $this->redirectToRoute('add_edit_book', ['id' => $book->getId()]);
                 }
@@ -140,7 +146,7 @@ class LibraryController extends AbstractController
                 $options['errors'] = $this->getErrorsValidation();
             }
         }
-
+        
         return $this->render('library/add_edit_book.html.twig', array_merge($options, [
             'book' => $book
         ]));

@@ -1,5 +1,4 @@
-{% extends 'base.html.twig' %}
-{% form_theme form 'form/fields.html.twig' %}
+{# {% extends 'base.html.twig' %}
 {% block title %}Register{% endblock %}
 {% block body %}
 <section class="main-content">
@@ -30,5 +29,51 @@
             {{ form_widget(form.save, {'label': 'Sign up','attr': {'class': 'btn btn-primary'}}) }}
         </div>
     {{ form_end(form) }}
+</section>
+{% endblock %} #}
+
+{% extends 'base.html.twig' %}
+{% block title %}Register{% endblock %}
+{% block body %}
+<section class="main-content">
+    <form method="post" class="user-account-form">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
+        {% if messages is defined %}{% if messages %}<div class="alert alert-info">{% for message in messages %}{{ message }}<br/>{% endfor %}</div>{% endif %}{% endif %}
+        <h2 class="h3 mb-3 font-weight-normal text-center">Register account</h1>
+        <div class="form-group">
+            <input type="email" value="{{ user.email }}" name="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+        </div>
+        {% if errors is defined %}
+            {% if errors.email is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.email %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group">
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required autocomplete="off">
+        </div>
+        {% if errors is defined %}
+            {% if errors.password is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.password %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                <input id="autologin" name="autologin" type="checkbox" class="custom-control-input" value="1"><label class="custom-control-label" for="autologin">Zaloguj automatycznie po rejestracji</label>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button class="btn btn-lg btn-primary" type="submit">
+                Sign up
+            </button>
+        </div>
+    </form>
 </section>
 {% endblock %}

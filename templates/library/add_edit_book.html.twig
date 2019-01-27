@@ -21,6 +21,7 @@
         {% endif %}
         <div class="form-group">
             {% if authors is defined %}
+            {% if authors %}
             <select id="inputAuthor" name="author" class="form-control">
                 <option value="">-- Select --</option>
                 {% for author in authors %}
@@ -29,6 +30,7 @@
             </select>
             {% else %}
                 <div class="alert alert-warning">First Add Authors<br/><a class="btn btn-primary" href="{{ path('add_edit_author') }}">Add Author</a></div>
+            {% endif %}
             {% endif %}
         </div>
         {% if errors is defined %}
@@ -41,7 +43,7 @@
             {% endif %}
         {% endif %}
         <div class="form-group">
-            <input id="inputPublicationDate" placeholder="Publication Date" type="text"{% if book.getPublicationDate() is defined %}{% if book.getPublicationDate() %} value="{{ book.getPublicationDate()|date("Y-m-d") }}"{% endif %}{% endif %} name="publication_date" class="form-control js-datepicker">
+            <input id="inputPublicationDate" placeholder="Publication Date e.g. 2018-01-20" type="text"{% if book.getPublicationDate() is defined %}{% if book.getPublicationDate() %} value="{{ book.getPublicationDate()|date("Y-m-d") }}"{% endif %}{% endif %} name="publication_date" class="form-control js-datepicker">
         </div>
         {% if errors is defined %}
             {% if errors.publication_date is defined %}
@@ -61,9 +63,9 @@
             </select>
         </div>
         {% if errors is defined %}
-            {% if errors.country is defined %}
+            {% if errors.translations is defined %}
             <div class="alert alert-danger" role="alert">
-                {% for error in errors.country %}
+                {% for error in errors.translations %}
                     {{ error }}<br/>
                 {% endfor %}
             </div>
