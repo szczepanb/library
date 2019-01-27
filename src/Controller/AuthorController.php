@@ -16,7 +16,8 @@ use App\Library\Utilities\AuthorUtility;
 use App\Library\AuthorForm;
 use App\Library\AuthorGrid;
 use App\Repository\AuthorRepository;
-use App\Utilities\PaginatorUtility;
+use App\Utilities\Paginator\PaginatorUtility;
+use App\Utilities\Paginator\PaginatorUrlGenerator;
 
 class AuthorController extends AbstractController
 {
