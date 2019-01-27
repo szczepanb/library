@@ -52,7 +52,8 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "App\\Migrations\\MigrationHandler::runMigrations"
         ],
         "post-update-cmd": [
             "@auto-scripts"

@@ -18,7 +18,6 @@ class AppFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
-
         $user = new User();
 
         $user->setEmail('bielecki.szczepan@gmail.com');
