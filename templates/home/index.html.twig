@@ -29,9 +29,13 @@
             <div class="alert alert-warning">Empty results. Login and add new books.</div>
             {% endif %}{% endif %}
         </div>
-        <div class="text-center">
+        {% if rows is defined %}
+         <div class="text-center">
+        {% if rows %}
             <a class="btn btn-primary" href="{{ path('library') }}">See All</a>
-        </div>
+        {% else %}
+            <a class="btn btn-primary" href="{{ path('add_edit_book') }}">Add Book</a>
+        {% endif %}</div>{% endif %}
     </div>
 </section>
 {% endblock %}
