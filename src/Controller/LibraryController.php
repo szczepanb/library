@@ -19,6 +19,7 @@ use App\Entity\Author;
 use App\Entity\Translations;
 use App\Utilities\Paginator\PaginatorUtility;
 use App\Utilities\Paginator\PaginatorUrlGenerator;
+use App\Utilities\Paginator\Exceptions\ExceptionInterface as PaginatorExceptionInterface;
 
 class LibraryController extends AbstractController
 {
@@ -47,9 +48,14 @@ class LibraryController extends AbstractController
         $total = $this->repository->getCountForGrid($filter['q'], $filter['author'], $filter['translation']);
 
         $parameters = $this->getParameters($filter);
-        $paginatorUrl = new PaginatorUrlGenerator($router, 'library', $parameters, null);
-        $paginator = new PaginatorUtility($paginatorUrl, $total, $limit, $page);
-        $pagination = $paginator->getPaginator();
+
+        try {
+            $paginatorUrl = new PaginatorUrlGenerator($router, 'library', $parameters, null);
+            $paginator = new PaginatorUtility($paginatorUrl, $total, $limit, $page);
+            $pagination = $paginator->getPaginator();
+        } catch (PaginatorExceptionInterface $e) {
+            throw $this->createNotFoundException('Page not exist');
+        }
 
         $rows = $this->repository->getForGrid($limit, $pagination->getOffset(), $filter['q'], $filter['author'], $filter['translation']);
 
