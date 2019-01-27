@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+{% block title %}Add Book{% endblock %}
+{% block body %}
+<section class="main-content">
+    <form method="post" class="user-account-form">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('author') }}">
+        {% if exception is defined %}<div class="alert alert-danger">{{ exception }}</div>{% endif %}
+        {# {% if logout_message %}<div class="alert alert-success">{{ logout_message }}</div>{% endif %} #}
+        <h2 class="h3 mb-3 font-weight-normal text-center">{% if author.id is defined %}Edit author{% else %}Add author{% endif %}</h1>
+        <div class="form-group">
+            <input id="inputName" placeholder="Name" type="text"{% if author.name is defined %} value="{{ author.name }}"{% endif %} name="name" class="form-control" autofocus>
+        </div>
+        {% if errors is defined %}
+            {% if errors.name is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.name %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group">
+            <input id="inputSurname" placeholder="Surname" type="text"{% if author.surname is defined %} value="{{ author.surname }}"{% endif %} name="surname" class="form-control" autofocus>
+        </div>
+        {% if errors is defined %}
+            {% if errors.surname is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.surname %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group">
+            <select id="inputCountry" name="country" class="form-control">
+                <option value="">-- Select --</option>
+                {% for key, country in countries %}
+                <option value="{{ key }}"{% if author.country is defined %}{% if author.country == key %} selected{% endif %}{% endif %}>{{ country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if errors is defined %}
+            {% if errors.country is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.country %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group text-center">
+            <button class="btn btn-lg btn-primary" type="submit" name="action" value="save_edit">Save and Edit</button>
+            <button class="btn btn-lg btn-primary" type="submit" name="action" value="save_return">Save and return to list</button>
+            <button class="btn btn-lg btn-primary" type="submit" name="action" value="save_add">Save and Add</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

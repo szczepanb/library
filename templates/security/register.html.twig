@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'form/fields.html.twig' %}
+{% block title %}Register{% endblock %}
+{% block body %}
+<section class="main-content">
+    {{ form_start(form) }}
+        <h2 class="h3 mb-3 font-weight-normal text-center">Register</h2>
+        {{ form_errors(form) }}
+
+        <div class="form-group">
+            {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'E-mail'}}) }}
+            {{ form_help(form.email) }}
+        </div>
+        {{ form_errors(form.email) }}
+
+        <div class="form-group">
+            {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Password'}}) }}
+            {{ form_help(form.password) }}
+        </div>
+        {{ form_errors(form.password) }}
+
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                {{ form_widget(form.autologin, {'attr': {'class': 'custom-control-input'}}) }}
+                {{ form_label(form.autologin, 'Zaloguj automatycznie po rejestracji', {'label_attr': {'class': 'custom-control-label'}}) }}
+            </div>
+        </div>
+        
+        <div class="form-group text-center">
+            {{ form_widget(form.save, {'label': 'Sign up','attr': {'class': 'btn btn-primary'}}) }}
+        </div>
+    {{ form_end(form) }}
+</section>
+{% endblock %}

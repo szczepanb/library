@@ -1,0 +1,53 @@
+$body-bg: #ffffff;
+$body-color: #494949;
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+.alert ul
+{
+    margin: 0;
+}
+
+.main-content
+{
+    max-width: 1440px;
+    width: 90%;
+    margin: auto;
+}
+
+header
+{
+    padding: 20px 0 30px;
+}
+
+.header-right-cont
+{
+    margin: 0 -10px;
+}
+
+.header-right-cont > *
+{
+    padding: 0 10px;
+}
+
+.user-account-form
+{
+    max-width: 480px;
+    width: 100%;
+    margin: auto;
+}
+
+.grid-top-btn
+{
+    margin-bottom: 20px;
+}
+
+.grid-filters-wrapper
+{
+    margin: 0 -10px;
+}
+
+.grid-filters-inside
+{
+    padding: 10px;
+}

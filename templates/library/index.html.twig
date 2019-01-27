@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+{% block title %}Library{% endblock %}
+{% block body %}
+<section class="main-content">
+    <div>
+        <div class="grid-top-btn">
+            <a class="btn btn-primary" href="{{ path('add_edit_book') }}">Add Book</a>
+        </div>
+        <div class="grid-filters">
+            <h3>Filtry</h3>
+            <form method="get" action="{{ path('library') }}">
+                <div class="d-flex grid-filters-wrapper">
+                    <div class="grid-filters-inside">
+                        <input id="inputQ" placeholder="Type title" type="text" value="{% if filter.q is defined %}{{ filter.q }}{% endif %}" name="q" class="form-control">
+                    </div>
+                    {% if authors is defined %}
+                    <div class="grid-filters-inside">
+                        <select id="inputCountry" name="author" class="form-control">
+                            <option value="">-- Select Author --</option>
+                            {% for author in authors %}
+                            <option value="{{ author.id }}"{% if filter.author is defined %}{% if filter.author == author.id %} selected{% endif %}{% endif %}>{{ author }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    {% if translations is defined %}
+                    <div class="grid-filters-inside">
+                        <select id="inputCountry" name="translation" class="form-control">
+                            <option value="">-- Select Translation --</option>
+                            {% for translation in translations %}
+                            <option value="{{ translation.name }}"{% if filter.translation is defined %}{% if filter.translation == translation.name %} selected{% endif %}{% endif %}>{{ translation.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    <div class="grid-filters-inside">
+                        <input class="btn btn-primary" type="submit" value="Filter">
+                        {% if filter is defined %}
+                        {% if filter.q or filter.author or filter.translation %}
+                        <a class="btn btn-primary" href="{{ path('library', {'q':'','author':'','translation':''}) }}">Reset</a>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% if messages is defined %}{% if messages %}<div class="alert alert-info">{% for message in messages %}{{ message }}<br/>{% endfor %}</div>{% endif %}{% endif %}
+        {% if exceptions is defined %}{% if exceptions %}<div class="alert alert-warning">{% for exception in exceptions %}{{ exception }}<br/>{% endfor %}</div>{% endif %}{% endif %}
+        <div class="table-responsive">
+            {% if rows is defined %}{% if rows %}
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th width="200">Publication Date</th>
+                        <th>Translations</th>
+                        {% if is_granted('ROLE_USER') %}
+                        <th class="text-center" width="155">Options</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.title }}</td>
+                        <td>{{ row.author.name }} {{ row.author.surname }}</td>
+                        <td>{{ row.getPublicationDate()|date("Y-m-d") }}</td>
+                        <td>{{ row.getTranslations()|join(', ') }}</td>
+                        {% if is_granted('ROLE_USER') %}
+                        <td>
+                            <div>
+                                <a class="btn btn-primary" href="{{ path('add_edit_book', {'id': row.id}) }}">Edit</a>
+                                <a class="btn btn-danger" data-toggle="modal" data-target="#removeBookModal"  href="javascript:void(0);" data-href="{{ path('del_book', {'id': row.id}) }}">Delete</a>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-warning">{% if filter.q or filter.author or filter.translation %}Empty results. Change filters.{% else %}Empty results. Add new books.{% endif %}</div>
+            {% endif %}{% endif %}
+        </div>
+        {% if is_granted('ROLE_USER') %}
+            {% include 'grid/remove.html.twig' with {'modal':{'id': 'removeBookModal', 'title': 'Remove Book', 'body': 'Are you sure that would like to remove book?'}} only%}
+        {% endif %}
+        {% include 'grid/pagination.html.twig' %}
+    </div>
+</section>
+{% endblock %}

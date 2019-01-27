@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+{% block title %}{% if book.id %}Edit book - {{ book.title }}{% else %}Add new book{% endif %}{% endblock %}
+{% block body %}
+<section class="main-content">
+    <form method="post" class="user-account-form">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('book') }}">
+        {% if exception is defined %}<div class="alert alert-danger">{{ exception }}</div>{% endif %}
+        {# {% if logout_message %}<div class="alert alert-success">{{ logout_message }}</div>{% endif %} #}
+        <h2 class="h3 mb-3 font-weight-normal text-center">{% if book.id %}Edit book{% else %}Add book{% endif %}</h1>
+        <div class="form-group">
+            <input id="inputTitle" placeholder="Title" type="text"{% if book.title is defined %} value="{{ book.title }}"{% endif %} name="title" class="form-control" autofocus>
+        </div>
+        {% if errors is defined %}
+            {% if errors.title is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.title %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group">
+            {% if authors is defined %}
+            <select id="inputAuthor" name="author" class="form-control">
+                <option value="">-- Select --</option>
+                {% for author in authors %}
+                <option value="{{ author.id }}"{% if book.author.id is defined %}{% if book.author.id == author.id %} selected{% endif %}{% endif %}>{{ author.name }} {{ author.surname }}</option>
+                {% endfor %}
+            </select>
+            {% else %}
+                <div class="alert alert-warning">First Add Authors<br/><a class="btn btn-primary" href="{{ path('add_edit_author') }}">Add Author</a></div>
+            {% endif %}
+        </div>
+        {% if errors is defined %}
+            {% if errors.author is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.author %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group">
+            <input id="inputPublicationDate" placeholder="Publication Date" type="text"{% if book.getPublicationDate() is defined %}{% if book.getPublicationDate() %} value="{{ book.getPublicationDate()|date("Y-m-d") }}"{% endif %}{% endif %} name="publication_date" class="form-control js-datepicker">
+        </div>
+        {% if errors is defined %}
+            {% if errors.publication_date is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.publication_date %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group">
+            <select id="inputCountry" multiple name="translations[]" class="form-control">
+                <option value="">-- Select --</option>
+                {% for key, country in countries %}
+                <option value="{{ key }}"{% if book.translations is defined %}{% if key in book.translations %} selected{% endif %}{% endif %}>{{ country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if errors is defined %}
+            {% if errors.country is defined %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in errors.country %}
+                    {{ error }}<br/>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+        <div class="form-group text-right">
+            <div class="btn-group">
+                <a class="btn btn-secondary" href="{{ path('library') }}">Cancel</a>
+                <button class="btn btn-success" type="submit" name="action" value="save_edit" data-toggle="tooltip" data-placement="top" title="Save and edit">Save</button>
+                <button class="btn btn-success" type="submit" name="action" value="save_return" data-toggle="tooltip" data-placement="top" title="Save and return to list"><<</button>
+                <button class="btn btn-success" type="submit" name="action" value="save_add" data-toggle="tooltip" data-placement="top" title="Save and Add">+</button>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

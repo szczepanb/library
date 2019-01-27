@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+{% block title %}Authors{% endblock %}
+{% block body %}
+<section class="main-content">
+    <div>
+        <div class="grid-top-btn">
+            <a class="btn btn-primary" href="{{ path('add_edit_author') }}">Add Author</a>
+        </div>
+        <div class="grid-filters">
+            <h3>Filtry</h3>
+            <form method="get" action="{{ path('author') }}">
+                <div class="d-flex grid-filters-wrapper">
+                    <div class="grid-filters-inside">
+                        <input id="inputQ" placeholder="Type name or surname" type="text" value="{% if filter.q is defined %}{{ filter.q }}{% endif %}" name="q" class="form-control">
+                    </div>
+                    {% if countries is defined %}
+                    <div class="grid-filters-inside">
+                        <select id="inputCountry" name="country" class="form-control">
+                            <option value="">-- Select --</option>
+                            {% for country in countries %}
+                            <option value="{{ country.country }}"{% if filter.country is defined %}{% if filter.country == country.country %} selected{% endif %}{% endif %}>{{ country.country }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    <div class="grid-filters-inside">
+                        <input class="btn btn-primary" type="submit" value="Filter">
+                        {% if filter is defined %}
+                        {% if filter.q or filter.country %}
+                        <a class="btn btn-primary" href="{{ path('library', {'q':'','country':''}) }}">Reset</a>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% if messages is defined %}{% if messages %}<div class="alert alert-info">{% for message in messages %}{{ message }}<br/>{% endfor %}</div>{% endif %}{% endif %}
+        {% if exceptions is defined %}{% if exceptions %}<div class="alert alert-warning">{% for exception in exceptions %}{{ exception }}<br/>{% endfor %}</div>{% endif %}{% endif %}
+        <div class="table-responsive">
+            {% if rows is defined %}{% if rows %}
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>Country</th>
+                        {% if is_granted('ROLE_USER') %}
+                        <th class="text-center" width="155">Options</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.surname }}</td>
+                        <td>{{ row.country }}</td>
+                        {% if is_granted('ROLE_USER') %}
+                        <td>
+                            <div>
+                                <a class="btn btn-primary" href="{{ path('add_edit_author', {'id': row.id}) }}">Edit</a>
+                                <a class="btn btn-danger" data-toggle="modal" data-target="#removeAuthorModal"  href="javascript:void(0);" data-href="{{ path('del_author', {'id': row.id}) }}">Delete</a>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-warning">{% if filter.q or filter.country %}Empty results. Change filters.{% else %}Empty results. Add new authors.{% endif %}</div>
+            {% endif %}{% endif %}
+        </div>
+        {% include 'grid/remove.html.twig' with {'modal':{'id': 'removeAuthorModal', 'title': 'Remove Author', 'body': 'Are you sure that would like to remove author?'}} only%}
+        {% include 'grid/pagination.html.twig' %}
+    </div>
+</section>
+{% endblock %}
