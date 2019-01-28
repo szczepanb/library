@@ -1,6 +1,4 @@
-# Form builder
-
-Digital library
+# Digital library
 
 ## Authors
 
