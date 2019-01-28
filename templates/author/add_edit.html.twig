@@ -48,11 +48,13 @@
             </div>
             {% endif %}
         {% endif %}
-        <div class="btn-group">
-            <a class="btn btn-secondary" href="{{ path('author') }}">Cancel</a>
-            <button class="btn btn-success" type="submit" name="action" value="save_edit" data-toggle="tooltip" data-placement="top" title="Save and edit">Save</button>
-            <button class="btn btn-success" type="submit" name="action" value="save_return" data-toggle="tooltip" data-placement="top" title="Save and return to list"><<</button>
-            <button class="btn btn-success" type="submit" name="action" value="save_add" data-toggle="tooltip" data-placement="top" title="Save and Add">+</button>
+        <div class="form-group text-right">
+            <div class="btn-group">
+                <a class="btn btn-secondary" href="{{ path('author') }}">Cancel</a>
+                <button class="btn btn-success" type="submit" name="action" value="save_edit" data-toggle="tooltip" data-placement="top" title="Save and edit">Save</button>
+                <button class="btn btn-success" type="submit" name="action" value="save_return" data-toggle="tooltip" data-placement="top" title="Save and return to list"><<</button>
+                <button class="btn btn-success" type="submit" name="action" value="save_add" data-toggle="tooltip" data-placement="top" title="Save and Add">+</button>
+            </div>
         </div>
     </form>
 </section>
